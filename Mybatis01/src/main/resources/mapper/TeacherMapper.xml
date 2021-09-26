@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 配置SQL语句，与实体类操作的对应关系。 -->
+<!-- 保证唯一性 -->
+<!-- 使用接口方式 加载命名空间 使用代理模式 -->
+<mapper namespace="com.pctc.dao.TeacherMapper">
+
+    <!-- <select id="selectAll" resultType="com.pctc.model.User">
+         select t_id as id,t_username as username,t_password password from t_user
+     </select>-->
+
+
+    <select id="getAllMessage" resultType="com.pctc.model.Teacher">
+        select * from teacher
+    </select>
+
+    <insert id="insertTeacher">
+        insert into teacher(name,age,protitle) values(#{name},#{age},#{protitle})
+    </insert>
+
+    <update id="editTeacher">
+       update teacher set name=#{name},age=#{age},protitle=#{protitle} where id=#{id}
+    </update>
+
+    <delete id="deleteTeacher">
+        delete from teacher where id=#{id}
+    </delete>
+
+    <!--与上面的insert插入信息对比，多出了参数类型,但是参数类型可以省略-->
+    <insert id="insertTeacher1" parameterType="com.pctc.model.Teacher">
+        insert into teacher(name,age,protitle)
+              values (#{name},#{age},#{protitle})
+    </insert>
+
+
+   <!-- 与前面的insert插入信息对比，多出了参数类型为map,变量名随意，调用时，map的key要和变量名要一致 ,参数也可以省略-->
+    <insert id="insertTeacher2" parameterType="java.util.Map">
+        insert into teacher(name,age,protitle)
+              values (#{name},#{age},#{protitle})
+    </insert>
+
+
+    <!-- 带有多个参数,参数名 #{param1},#{param2}，不能使用参数名-->
+    <!--    values (#{param1},#{param2},#{param3}...),#{arg0},#{arg1},#{arg2}...-->
+    <insert id="insertTeacher3" parameterType="java.util.Map">
+         insert into teacher(name,age,protitle)
+              values (#{param1},#{param2},#{param3})
+    </insert>
+
+   <!-- 与之前的查询对比-->
+    <!--把表或视图中字段与类中的属性建立对应关系，做复杂的查询用得更多-->
+    <resultMap type="com.pctc.model.Teacher" id="TeacherMap">
+        <result column="id" property="id"/>
+        <result column="name" property="name" />
+        <result column="age" property="age"/>
+        <result column="protitle" property="protitle"/>
+    </resultMap>
+
+    <!-- 查询数据表中的所有记录，并封装Teacher对象集合 -->
+    <select id="getAllMessage1" resultMap="TeacherMap">
+        select * from teacher
+    </select>
+
+</mapper>
