@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 配置SQL语句，与实体类操作的对应关系。 -->
+<!-- 保证唯一性 -->
+<!-- 使用接口方式 加载命名空间 使用代理模式 -->
+<mapper namespace="com.pctc.dao.FactoryMapper">
+    
+    <resultMap id="FactoryMap" type="com.pctc.model.Factory">
+        <result column="t_id" property="id"/>
+        <result column="t_factoryname" property="factoryName"/>
+    </resultMap>
+
+    <select id="getFactoryById" resultMap="FactoryMap">
+        select  *  from factory where t_id=#{id};
+    </select>
+
+    <!--连接查询，一对多，从学校查找在此学校的学生-->
+    <resultMap id="FactoryMap1" type="com.pctc.model.Factory">
+        <result column="t_id" property="id"/>
+        <result column="t_factoryname" property="factoryName"/>
+
+        <!--collection定义关联集合类型的属性
+        ofType:指定集合里面元素的类型-->
+        <collection property="workers" ofType="com.pctc.model.Worker">
+            <id column="t_id1" property="id"/>
+            <result column="t_name" property="name"/>
+            <result column="t_age" property="age"/>
+            <result column="t_birthday" property="birthday"/>
+            <result column="t_fid" property="fid"/>
+        </collection>
+    </resultMap>
+
+    <select id="getFactoryById1" resultMap="FactoryMap1">
+        select f.*,w.t_id as t_id1,w.t_name,w.t_age,t_birthday,t_fid from factory f,worker w where w.t_fid=f.t_id and f.t_id=#{id}
+    </select>
+
+
+
+
+    <resultMap id="FactoryMap2" type="com.pctc.model.Factory">
+        <result column="t_id" property="id"/>
+        <result column="t_factoryname" property="factoryName"/>
+
+        <!--collection定义关联集合类型的属性-->
+        <collection property="workers"
+                    select="com.pctc.dao.WorkerMapper.getWorkersByFactoryId"
+                    column="fid=t_id" fetchType="lazy">
+
+        </collection>
+    </resultMap>
+
+    <select id="getFactoryById2" resultMap="FactoryMap2">
+        select * from factory where t_id=#{id}
+    </select>
+
+
+    <!--VO实现-->
+    <resultMap id="FactoryVoMap" type="com.pctc.model.WorkerFactoryVo">
+        <id column="t_id" property="id"/>
+        <result column="t_name" property="name"/>
+        <result column="t_age" property="age"/>
+        <result column="t_birthday" property="birthday"/>
+        <result column="t_fid" property="fid"/>
+        <result column="t_name1" property="factoryName"/>
+    </resultMap>
+
+    <select id="getFactoryIdVo" resultMap="FactoryVoMap">
+        select w.*,f.t_factoryname as t_name1 from worker w,factory f where w.t_fid=f.t_id and f.t_id=#{id}
+    </select>
+
+
+
+
+
+</mapper>
