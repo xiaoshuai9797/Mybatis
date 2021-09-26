@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 配置SQL语句，与实体类操作的对应关系。 -->
+<!-- 保证唯一性 -->
+<!-- 使用接口方式 加载命名空间 使用代理模式 -->
+<mapper namespace="com.pctc.dao.WorkerMapper">
+
+    <resultMap id="WorkerMap" type="com.pctc.model.Worker">
+        <id column="t_id" property="id"/>
+        <result column="t_name" property="name"/>
+        <result column="t_age" property="age"/>
+        <result column="t_birthday" property="birthday"/>
+        <result column="t_fid" property="fid"/>
+    </resultMap>
+                    <!--IF标签-->
+    <select id="getWorker" resultMap="WorkerMap">
+        select  * from worker where 1=1
+        <if test="id !=null and id !=''">
+            and t_id=#{id}
+        </if>
+        <if test="name != null and name !=''">
+            and t_name like #{name}
+        </if>
+        <if test="age != null and age !=''">
+            and t_age>#{age}
+        </if>
+    </select>
+
+    <!--使用where标签-->
+    <select id="getWorker1" resultMap="WorkerMap">
+        select * from worker
+        <where>
+            <if test="id !=null and id !=''">
+                and t_id=#{id}
+            </if>
+            <if test="name != null and name !=''">
+                and t_name like #{name}
+            </if>
+            <if test="age != null and age !=''">
+                and t_age>#{age}
+            </if>
+        </where>
+    </select>
+
+<!--使用choose标签，choose标签里面跟when标签，整个choose标签只能走一个when
+    如果没有一个满足条件那就走otherwise标签，和Switch语句类似
+    即使传入三个参数，当有第一个满足条件时，直接走第一个条件，详情看测试结果即可理解-->
+    <select id="getWorker2" resultMap="WorkerMap">
+        select * from worker where 1=1
+        <choose>
+            <when test="id !=null and id !=''">
+                and t_id=#{id}
+            </when>
+            <when test="name != null and name !=''">
+                and t_name like #{name}
+            </when>
+            <when test="age != null and age !=''">
+                and t_age>#{age}
+            </when>
+
+            <otherwise>
+                and2=2
+            </otherwise>
+        </choose>
+    </select>
+
+<!--where和choose一起配合使用，和choose相比只是sql语句不用写where1=1，其他效果相同-->
+    <select id="getWorker3" resultMap="WorkerMap">
+        select * from worker
+        <where>
+            <choose>
+                <when test="id !=null and id !=''">
+                    and t_id=#{id}
+                </when>
+                <when test="name != null and name !=''">
+                    and t_name like #{name}
+                </when>
+                <when test="age != null and age !=''">
+                    and t_age>#{age}
+                </when>
+
+                <otherwise>
+                    and2=2
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+<!--set标签用于修改数据，注意最后跟上where t_id=#{id},每一个动态语句最后得跟上逗号-->
+<update id="updateWorker">
+    update worker
+    <set>
+        <if test="fid !=null and fid !=''">
+             t_fid=#{fid},
+        </if>
+        <if test="name != null and name !=''">
+             t_name = #{name},
+        </if>
+        <if test="age != null and age !=''">
+             t_age=#{age},
+        </if>
+    </set>
+      where t_id=#{id}
+</update>
+
+
+    <!--trim标签中的prefix表示前缀，会紧跟在上面语句的后面
+    prefixOverrides表示去除第一个and或则or-->
+    <select id="getWorker4" resultMap="WorkerMap">
+        select * from worker
+        <trim prefix="where" prefixOverrides="and | or">
+            <if test="id !=null and id !=''">
+                and t_id=#{id}
+            </if>
+            <if test="name != null and name !=''">
+                and t_name like #{name}
+            </if>
+            <if test="age != null and age !=''">
+                and t_age>#{age}
+            </if>
+        </trim>
+    </select>
+
+
+    <!--跟上面的trim相比，同样使用了prefix，但是此处使用了suffixOverrides
+    作用为去除最后一个and或则or，注意对比上面的if标签内容里面的and的位置
+    拓展：除了prefix外，还有suffix,suffix作用为跟在所有语句的最后，此处没有使用，百度即可知-->
+    <select id="getWorker5" resultMap="WorkerMap">
+        select * from worker
+        <trim prefix="where" suffixOverrides="and | or">
+            <if test="id !=null and id !=''">
+                 t_id=#{id} and
+            </if>
+            <if test="name != null and name !=''">
+                 t_name like #{name} and
+            </if>
+            <if test="age != null and age !=''">
+                 t_age>#{age} and
+            </if>
+        </trim>
+    </select>
+
+
+   <!-- foreach用于in语句，整个sql语句呈现成select * from worker where t_id in(1,2,3...)
+   collection：表示迭代集合的名称，可以使用@Param注解指定
+   index：在list、Set和数组中,index表示当前迭代的位置，在map中，index代指是元素的key，该参数是可选项
+   item：表示本次迭代获取的元素，若collection为List、Set或者数组，则表示其中的元素；若collection为map，则代表key-value的value，该参数为必选
+   open:表示该语句以什么开始，最常用的是左括弧’(’，注意:mybatis会将该字符拼接到整体的sql语句之前，并且只拼接一次，该参数为可选项
+   close:表示该语句以什么结束，最常用的是右括弧’)’，注意:mybatis会将该字符拼接到整体的sql语句之后，该参数为可选项
+   separator:mybatis会在每次迭代后给sql语句append上separator属性指定的字符，该参数为可选项-->
+<select id="getWorker6" resultMap="WorkerMap">
+    select * from worker where t_id in
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+              #{item}
+    </foreach>
+</select>
+
+
+<!--整个Sql语句呈现Insert into worker(t_name,t_age,t_birthday,t_fid) values('刘斌',50,'2021-09-25',3),('汪炳剑',30,'2021-09-25',3)
+    后面依然可以继续添加-->
+<insert id="addWorkerBatch">
+    insert into worker(t_name,t_age,t_birthday,t_fid) values
+    <foreach collection="list" item="worker" separator="," >
+        (#{worker.name},#{worker.age},#{worker.birthday},#{worker.fid})
+    </foreach>
+</insert>
+
+
+<!--  Sql中可将重复的sql提取出来，使用时用include引用即可，最终达到sql重用的目的-->
+    <sql id="workerfield">
+        (t_name,t_age,t_birthday,t_fid)
+    </sql>
+
+    <insert id="addWorkerBatch1">
+        insert into worker
+        <include refid="workerfield">
+        </include>
+
+        values
+        <foreach collection="list" item="worker" separator=",">
+            (#{worker.name},#{worker.age},#{worker.birthday},#{worker.fid})
+        </foreach>
+    </insert>
+
+
+<!--bind-->
+    <select id="getWorker7" resultMap="WorkerMap">
+
+        
+        select * from worker where 1=1
+
+        <if test="id !=null and id !=''">
+            and t_id=#{id}
+        </if>
+        <if test="name != null and name !=''">
+            <bind name="workerName" value="'%'+name+'%'"/>
+            and  t_name like #{workerName}
+        </if>
+        <if test="age != null and age !=''">
+            and t_age>#{age}
+        </if>
+    </select>
+
+
+</mapper>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--
+    default="development"  开发环境
+    default="work"       发布环境
+      -->
+
+
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!--懒加载-->
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+
+    <environments default="development">
+
+        <environment id="development">
+            <!-- 配置事物 -->
+            <transactionManager type="JDBC"></transactionManager>
+
+            <!-- 配置数据源 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/xs?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=Asia/Shanghai"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+
+        </environment>
+    </environments>
+
+
+    <!--导入映射文件 -->
+    <!--<mappers>
+        <mapper class="com.pctc.dao.WorkerMapper"/>
+    </mappers>-->
+
+    <mappers>
+        <mapper resource="mapper/WorkerMapper.xml"/>
+        <!--<mapper resource="mapper/FactoryMapper.xml"/>-->
+    </mappers>
+
+
+
+</configuration>
+

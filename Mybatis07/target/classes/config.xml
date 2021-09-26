@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!--
+    default="development"  开发环境
+    default="work"       发布环境
+      -->
+
+
+    <!--<settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        &lt;!&ndash;懒加载&ndash;&gt;
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+    <!--<settings>
+
+        &lt;!&ndash; 显示的指定每个我们需要更改的配置的值，即使他是默认的。防止版本更新带来的问题  &ndash;&gt;
+        <setting name="cacheEnabled" value="true"/>
+        <setting name="lazyLoadingEnabled" value="true"/>
+        <setting name="aggressiveLazyLoading" value="false"/>
+    </settings>
+-->
+    <environments default="development">
+
+        <environment id="development">
+            <!-- 配置事物 -->
+            <transactionManager type="JDBC"></transactionManager>
+
+            <!-- 配置数据源 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/xs?useUnicode=true&amp;characterEncoding=utf8&amp;serverTimezone=Asia/Shanghai"/>
+                <property name="username" value="root"/>
+                <property name="password" value="root"/>
+            </dataSource>
+
+        </environment>
+    </environments>
+
+
+    <!--导入映射文件 -->
+    <!--<mappers>
+        <mapper class="com.pctc.dao.WorkerMapper"/>
+    </mappers>-->
+
+    <mappers>
+        <mapper resource="mapper/WorkerMapper.xml"/>
+      <!--  <mapper resource="mapper/FactoryMapper.xml"/>-->
+    </mappers>
+
+
+
+</configuration>
+

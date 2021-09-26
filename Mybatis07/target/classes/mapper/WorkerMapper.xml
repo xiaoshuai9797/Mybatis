@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 配置SQL语句，与实体类操作的对应关系。 -->
+<!-- 保证唯一性 -->
+<!-- 使用接口方式 加载命名空间 使用代理模式 -->
+<mapper namespace="com.pctc.dao.WorkerMapper">
+
+
+    <resultMap id="WorkerMap" type="com.pctc.model.Worker">
+        <id column="t_id" property="id"/>
+        <result column="t_name" property="name"/>
+        <result column="t_age" property="age"/>
+        <result column="t_birthday" property="birthday"/>
+        <result column="t_fid" property="fid"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        t_id,t_name,t_age,t_birthday,t_fid
+    </sql>
+
+    <select id="selectWorkerPage" resultMap="WorkerMap" parameterType="java.util.Map">
+        select
+        <include refid="Base_Column_List"/>
+            from worker limit #{recordNum},#{pageSize}
+    </select>
+
+
+
+    <select id="selectWorkerPagePlug" resultMap="WorkerMap">
+
+        select
+        <include refid="Base_Column_List"/>
+                from worker where 1=1
+        <if test="id !=null and id !=''">
+            and t_id=#{id}
+        </if>
+        <if test="name != null and name !=''">
+            <bind name="workerName" value="'%'+name+'%'"/>
+            and  t_name like #{workerName}
+        </if>
+        <if test="age != null and age !=''">
+            and t_age>#{age}
+        </if>
+    </select>
+
+
+</mapper>
