@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pctc.dao.WorkerMapper" >
+  <resultMap id="BaseResultMap" type="com.pctc.model.Worker" >
+    <id column="t_id" property="tId" jdbcType="INTEGER" />
+    <result column="t_name" property="tName" jdbcType="VARCHAR" />
+    <result column="t_age" property="tAge" jdbcType="INTEGER" />
+    <result column="t_birthday" property="tBirthday" jdbcType="DATE" />
+    <result column="t_fid" property="tFid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    t_id, t_name, t_age, t_birthday, t_fid
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.pctc.model.WorkerExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from worker
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from worker
+    where t_id = #{tId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from worker
+    where t_id = #{tId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.pctc.model.WorkerExample" >
+    delete from worker
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.pctc.model.Worker" >
+    insert into worker (t_id, t_name, t_age, 
+      t_birthday, t_fid)
+    values (#{tId,jdbcType=INTEGER}, #{tName,jdbcType=VARCHAR}, #{tAge,jdbcType=INTEGER}, 
+      #{tBirthday,jdbcType=DATE}, #{tFid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.pctc.model.Worker" >
+    insert into worker
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="tId != null" >
+        t_id,
+      </if>
+      <if test="tName != null" >
+        t_name,
+      </if>
+      <if test="tAge != null" >
+        t_age,
+      </if>
+      <if test="tBirthday != null" >
+        t_birthday,
+      </if>
+      <if test="tFid != null" >
+        t_fid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="tId != null" >
+        #{tId,jdbcType=INTEGER},
+      </if>
+      <if test="tName != null" >
+        #{tName,jdbcType=VARCHAR},
+      </if>
+      <if test="tAge != null" >
+        #{tAge,jdbcType=INTEGER},
+      </if>
+      <if test="tBirthday != null" >
+        #{tBirthday,jdbcType=DATE},
+      </if>
+      <if test="tFid != null" >
+        #{tFid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.pctc.model.WorkerExample" resultType="java.lang.Integer" >
+    select count(*) from worker
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update worker
+    <set >
+      <if test="record.tId != null" >
+        t_id = #{record.tId,jdbcType=INTEGER},
+      </if>
+      <if test="record.tName != null" >
+        t_name = #{record.tName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tAge != null" >
+        t_age = #{record.tAge,jdbcType=INTEGER},
+      </if>
+      <if test="record.tBirthday != null" >
+        t_birthday = #{record.tBirthday,jdbcType=DATE},
+      </if>
+      <if test="record.tFid != null" >
+        t_fid = #{record.tFid,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update worker
+    set t_id = #{record.tId,jdbcType=INTEGER},
+      t_name = #{record.tName,jdbcType=VARCHAR},
+      t_age = #{record.tAge,jdbcType=INTEGER},
+      t_birthday = #{record.tBirthday,jdbcType=DATE},
+      t_fid = #{record.tFid,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.pctc.model.Worker" >
+    update worker
+    <set >
+      <if test="tName != null" >
+        t_name = #{tName,jdbcType=VARCHAR},
+      </if>
+      <if test="tAge != null" >
+        t_age = #{tAge,jdbcType=INTEGER},
+      </if>
+      <if test="tBirthday != null" >
+        t_birthday = #{tBirthday,jdbcType=DATE},
+      </if>
+      <if test="tFid != null" >
+        t_fid = #{tFid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where t_id = #{tId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.pctc.model.Worker" >
+    update worker
+    set t_name = #{tName,jdbcType=VARCHAR},
+      t_age = #{tAge,jdbcType=INTEGER},
+      t_birthday = #{tBirthday,jdbcType=DATE},
+      t_fid = #{tFid,jdbcType=INTEGER}
+    where t_id = #{tId,jdbcType=INTEGER}
+  </update>
+</mapper>
