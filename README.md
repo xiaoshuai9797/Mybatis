@@ -1,5 +1,5 @@
-# Mybatis_xs
-Mybatis框架的描述
+# Mybatis
+Mybatis框架学习笔记
 
 01:初学Mybatis实现对于老师的简单增删改查。一张表的操作
 
